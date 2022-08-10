@@ -36,9 +36,9 @@ It should create 5 classes called .text-1 to .text-5 where each has a font-size 
 -->
 
 <style type='text/scss'>
-
-
-
+@for $j from 1 through 6 {
+  .text-#{$j} { font-size: 15px * $j; }
+}
 </style>
 
 <p class="text-1">Hello</p>
