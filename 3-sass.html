@@ -1,0 +1,356 @@
+<!-- 
+1-Store Data with Sass Variables
+
+In JavaScript, variables are defined using the let and const keywords. In Sass, variables start with a $ followed by the variable name.
+
+$main-fonts: Arial, sans-serif;
+$headings-color: green;
+
+And to use the variables:
+
+h1 {
+  font-family: $main-fonts;
+  color: $headings-color;
+}
+
+Create a variable $text-color and set it to red. Then change the value of the color property for the .blog-post and h2 to the $text-color variable.
+
+Solution:
+<style type='text/scss'>
+    $text-color: red;
+  
+      .header{
+        text-align: center;
+      }
+      .blog-post, h2 {
+        color: $text-color;
+      }
+    </style>
+-->
+
+<!-- 
+2-Nest CSS with Sass
+
+nav {
+  background-color: red;
+}
+
+nav ul {
+  list-style: none;
+}
+
+nav ul li {
+  display: inline-block;
+}
+
+For a large project, the CSS file will have many lines and rules. This is where nesting can help organize your code by placing child style rules 
+within the respective parent elements:
+
+nav {
+  background-color: red;
+
+  ul {
+    list-style: none;
+
+    li {
+      display: inline-block;
+    }
+  }
+}
+
+Use the nesting technique shown above to re-organize the CSS rules for both children of .blog-post element. For testing purposes, the h1 should 
+come before the p element.
+
+Solution:
+<style type='text/scss'>
+    .blog-post {
+      h1 {
+        text-align: center;
+        color: blue;
+      }
+      p {
+        font-size: 20px;
+      }
+    }
+    </style>
+-->
+
+<!-- 
+3-Create Reusable CSS with Mixins
+
+Newer CSS features take time before they are fully adopted and ready to use in all browsers. As features are added to browsers, CSS rules 
+using them may need vendor prefixes. Consider box-shadow:
+
+div {
+  -webkit-box-shadow: 0px 0px 4px #fff;
+  -moz-box-shadow: 0px 0px 4px #fff;
+  -ms-box-shadow: 0px 0px 4px #fff;
+  box-shadow: 0px 0px 4px #fff;
+}
+
+It's a lot of typing to re-write this rule for all the elements that have a box-shadow, or to change each value to test different effects. 
+Mixins are like functions for CSS. Here is how to write one:
+
+@mixin box-shadow($x, $y, $blur, $c){ 
+  -webkit-box-shadow: $x $y $blur $c;
+  -moz-box-shadow: $x $y $blur $c;
+  -ms-box-shadow: $x $y $blur $c;
+  box-shadow: $x $y $blur $c;
+}
+
+The definition starts with @mixin followed by a custom name. The parameters (the $x, $y, $blur, and $c in the example above) are optional. Now 
+any time a box-shadow rule is needed, only a single line calling the mixin replaces having to type all the vendor prefixes. A mixin is called 
+with the @include directive:
+
+div {
+  @include box-shadow(0px, 0px, 4px, #fff);
+}
+
+Write a mixin for border-radius and give it a $radius parameter. It should use all the vendor prefixes from the example. Then use the 
+border-radius mixin to give the #awesome element a border radius of 15px.
+
+Solution:
+<style type='text/scss'>
+    @mixin border-radius($radius){
+    -webkit-border-radius:$radius;
+    -moz-border-radius:$radius;
+    -ms-border-radius:$radius;
+    border-radius:$radius;;
+  }
+  
+  
+      #awesome {
+        width: 150px;
+        height: 150px;
+        background-color: green;
+        @include border-radius(15px);
+      }
+    </style>
+-->
+
+<!-- 
+4-Use @if and @else to Add Logic To Your Styles
+
+@mixin text-effect($val) {
+  @if $val == danger {
+    color: red;
+  }
+  @else if $val == alert {
+    color: yellow;
+  }
+  @else if $val == success {
+    color: green;
+  }
+  @else {
+    color: black;
+  }
+}
+
+Create a mixin called border-stroke that takes a parameter $val. The mixin should check for the following conditions using @if, @else if, and @else:
+
+light - 1px solid black
+medium - 3px solid black
+heavy - 6px solid black
+
+If $val is not light, medium, or heavy, the border should be set to none.   
+
+Solution:
+<style type='text/scss'>
+    @mixin border-stroke($val) {
+    @if $val == light {
+      border: 1px solid black;
+    }
+    @else if $val == medium {
+      border: 3px solid black;
+    }
+    @else if $val == heavy {
+      border: 6px solid black;
+    }
+    @else {
+      border: none;
+    }
+  }
+  
+      #box {
+        width: 150px;
+        height: 150px;
+        background-color: red;
+        @include border-stroke(medium);
+      }
+    </style>
+-->
+
+<!-- 
+5-Use @for to Create a Sass Loop
+
+@for $i from 1 through 12 {
+  .col-#{$i} { width: 100%/12 * $i; }
+}
+
+The #{$i} part is the syntax to combine a variable (i) with text to make a string. When the Sass file is converted to CSS, it looks like this:
+
+.col-1 {
+  width: 8.33333%;
+}
+
+.col-2 {
+  width: 16.66667%;
+}
+
+...
+
+.col-12 {
+  width: 100%;
+}
+
+This is a powerful way to create a grid layout. Now you have twelve options for column widths available as CSS classes.
+
+Write a @for directive that takes a variable $j that goes from 1 to 6.
+
+It should create 5 classes called .text-1 to .text-5 where each has a font-size set to 15px multiplied by the index.
+
+Solution:
+<style type='text/scss'>
+    @for $j from 1 through 6 {
+      .text-#{$j} { font-size: 15px * $j; }
+    }
+    </style>
+-->
+
+<!-- 
+6-Use @each to Map Over Items in a List
+
+$colors: (color1: blue, color2: red, color3: green);
+
+@each $key, $color in $colors {
+  .#{$color}-text {color: $color;}
+}
+
+Note that the $key variable is needed to reference the keys in the map. Otherwise, the compiled CSS would have color1, color2... in it. Both of 
+the above code examples are converted into the following CSS:
+
+.blue-text {
+  color: blue;
+}
+
+.red-text {
+  color: red;
+}
+
+.green-text {
+  color: green;
+}
+
+Write an @each directive that goes through a list: blue, black, red and assigns each variable to a .color-bg class, where the color part changes 
+for each item. Each class should set the background-color the respective color.   
+
+Solution:
+<style type='text/scss'>
+    $background-colors: (background-color1: blue, background-color2: black, background-color3: red);
+  
+  @each $key, $background-color in $background-colors {
+    .#{$background-color}-bg {background-color: $background-color;}
+  }
+  
+      div {
+        height: 200px;
+        width: 200px;
+      }
+    </style>
+-->
+
+<!-- 
+7-Apply a Style Until a Condition is Met with @while
+
+$x: 1;
+@while $x < 13 {
+  .col-#{$x} { width: 100%/12 * $x;}
+  $x: $x + 1;
+}
+
+First, define a variable $x and set it to 1. Next, use the @while directive to create the grid system while $x is less than 13. After setting 
+the CSS rule for width, $x is incremented by 1 to avoid an infinite loop.
+
+Use @while to create a series of classes with different font-sizes.
+
+There should be 5 different classes from text-1 to text-5. Then set font-size to 15px multiplied by the current index number. Make sure to 
+avoid an infinite loop!   
+
+Solution:
+<style type='text/scss'>
+    $x: 1;
+    @while $x < 6 {
+      .text-#{$x} { font-size: 15px * $x;}
+      $x: $x + 1;
+    }
+    </style>
+-->
+
+<!-- 
+8-Split Your Styles into Smaller Chunks with Partials
+
+For example, if all your mixins are saved in a partial named "_mixins.scss", and they are needed in the "main.scss" file, this is how to use them 
+in the main file:
+
+@import 'mixins'
+
+Write an @import statement to import a partial named _variables.scss into the main.scss file.
+
+Solution:
+@import 'variables'
+-->
+
+<!-- 
+9-Extend One Set of CSS Styles to Another Element
+
+For example, the below block of CSS rules style a .panel class. It has a background-color, height and border.
+
+.panel{
+  background-color: red;
+  height: 70px;
+  border: 2px solid green;
+}
+
+Now you want another panel called .big-panel. It has the same base properties as .panel, but also needs a width and font-size. It's possible to 
+copy and paste the initial CSS rules from .panel, but the code becomes repetitive as you add more types of panels. The extend directive is a simple 
+way to reuse the rules written for one element, then add more for another:
+
+.big-panel{
+  @extend .panel;
+  width: 150px;
+  font-size: 2em;
+}
+
+The .big-panel will have the same properties as .panel in addition to the new styles.
+
+Make a class .info-important that extends .info and also has a background-color set to magenta.
+
+Solution:
+<style type='text/scss'>
+    h3{
+      text-align: center;
+    }
+    .info{
+      width: 200px;
+      border: 1px solid black;
+      margin: 0 auto;
+    }
+    .info-important{
+      @extend .info;
+      background-color: magenta;
+    }
+  </style>
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
